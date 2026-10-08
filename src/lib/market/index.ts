@@ -1,5 +1,7 @@
 export * from "./types.ts";
-export { AUTO_APPROVE_LIMIT_USD, JUDGE_MIN_CONFIDENCE, fundingGate, fundingRequiresHuman } from "./policy.ts";
+export { AUTO_APPROVE_LIMIT_USD, JUDGE_MIN_CONFIDENCE, fundingGate, fundingRequiresHuman, graphGateMode } from "./policy.ts";
+export { NETWORKS, selectedNetwork, settlementRail, USDC_BASE_SEPOLIA, type Network, type TxRecord } from "./settlement.ts";
+export { spendCaps, spentToday } from "./spend.ts";
 export { checkProviderWallet } from "./provider-risk.ts";
 export { SEED_PROVIDERS, getProvider, listProviders, listSkills } from "./catalog.ts";
 export { discover } from "./discovery.ts";

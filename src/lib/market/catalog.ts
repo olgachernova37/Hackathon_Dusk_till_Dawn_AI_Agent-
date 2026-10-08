@@ -39,7 +39,8 @@ export const SEED_PROVIDERS: readonly Provider[] = Object.freeze([
     id: "audit-hawk",
     name: "Audit Hawk",
     skills: ["contract_audit"],
-    priceUsd: 25,
+    // Above the $1 agents-alone limit, within the $5 hard cap and testnet faucet amounts.
+    priceUsd: 2,
     payTo: "0x4444444444444444444444444444444444444444",
     rating: 4.7,
     jobs: 19,

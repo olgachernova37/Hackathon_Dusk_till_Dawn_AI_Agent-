@@ -21,7 +21,20 @@ type Phrase = keyof Dictionary["market"]["voice"];
 
 type DealView = Deal & { funds: string; done: boolean };
 type ApiError = { error?: { code?: string; message?: string } };
-type CatalogReply = { providers: Provider[]; skills: string[]; autoApproveLimitUsd: number };
+type CatalogReply = {
+  providers: Provider[];
+  skills: string[];
+  autoApproveLimitUsd: number;
+  settlement: { mode: "simulated" | "base-sepolia" | "sepolia"; network: string | null; buyerAddress: string | null; escrowAddress: string | null; escrowUrl: string | null };
+  caps: { perPaymentUsd: number; dailyUsd: number; spentTodayUsd: number };
+  graphGate: "enforce" | "advisory";
+};
+const shortHash = (value: string) => `${value.slice(0, 10)}…${value.slice(-6)}`;
+
+function TxLink({ label, tx }: { label: string; tx?: { hash: string; url: string } }) {
+  if (!tx) return null;
+  return <a href={tx.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-3 border border-ok/50 bg-ok/10 px-3 py-2 font-mono text-xs text-ok hover:bg-ok/20"><span>{label}</span><span>{shortHash(tx.hash)} ↗</span></a>;
+}
 type CreateReply = { deal: DealView; discovery: { chosen: Provider; candidates: Provider[]; reason: string }; requiresHuman: boolean; approvalActionId?: string };
 type Order = { skill: string; task: string; maxPriceUsd?: number; strategy?: DiscoveryStrategy; parsedBy: "openai" | "keywords" };
 type AskReply = CreateReply & { order: Order };
@@ -68,10 +81,10 @@ function Panel({ title, children, className = "" }: { title: string; children: R
   return <section className={`bg-panel p-5 sm:p-6 ${className}`}><h2 className="border-b border-border pb-3 font-mono text-xs uppercase tracking-[0.16em] text-muted">{title}</h2><div className="pt-4">{children}</div></section>;
 }
 
-function GraphTile({ risk }: { risk: ProviderRisk }) {
+function GraphTile({ risk, advisory }: { risk: ProviderRisk; advisory: boolean }) {
   const { t, usd, date, time, fill } = useI18n();
   if (!risk.available) {
-    return <div className="border border-warn/60 bg-warn/10 p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-warn">{t.market.graphUnavailable}</p><p className="mt-2 text-sm text-foreground">{risk.reasons[0]}</p></div>;
+    return <div className="border border-warn/60 bg-warn/10 p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-warn">{advisory ? t.market.graphAdvisory : t.market.graphUnavailable}</p><p className="mt-2 text-sm text-foreground">{risk.reasons[0]}</p></div>;
   }
   const score = risk.score ?? 0;
   const tone = score >= 70 ? "text-danger" : score >= 50 ? "text-warn" : "text-ok";
@@ -89,6 +102,7 @@ function GraphTile({ risk }: { risk: ProviderRisk }) {
           <div key={label} className="border border-border bg-panel p-2"><p className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted">{label}</p><p className={`mt-1 truncate font-mono text-sm ${index === 0 ? tone : "text-foreground"}`}>{value}</p></div>
         ))}
       </div>
+      {advisory && <p className="mt-3 font-mono text-[10px] text-warn">{t.market.graphAdvisory}</p>}
       {risk.source && <p className="mt-3 font-mono text-[10px] text-muted">{t.evidence.sourceSubgraph}: <span className="text-brand">{risk.source.subgraphId}</span></p>}
       {risk.reasons.length > 0
         ? <ul className="mt-3 space-y-1">{risk.reasons.map((reason) => <li key={reason} className="border-l-2 border-warn px-2 text-xs text-foreground">{reason}</li>)}</ul>
@@ -136,9 +150,10 @@ export default function MarketConsole() {
     }
   }, [locale, t.market.voice]);
 
+  // Reloaded whenever a deal changes state, so "spent today" stays current.
   useEffect(() => {
     void api<CatalogReply>("/api/market/providers").then(setCatalog).catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));
-  }, []);
+  }, [deal?.status]);
 
   const run = useCallback(async (work: () => Promise<void>): Promise<boolean> => {
     setBusy(true);
@@ -191,6 +206,11 @@ export default function MarketConsole() {
     setDiscovery(reply.discovery);
     await loadApproval(reply.approvalActionId);
   }), [run, loadApproval]);
+
+  const retryFunding = () => run(async () => {
+    if (!deal) return;
+    setDeal((await api<DealReply>("/api/market/deals/fund", { dealId: deal.id })).deal);
+  });
 
   const deliver = () => run(async () => {
     if (!deal) return;
@@ -260,7 +280,9 @@ export default function MarketConsole() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="border-b border-warn bg-warn/10 px-4 py-2 text-center text-xs text-warn">{t.market.simulatedBanner}</div>
+      {catalog && catalog.settlement.mode !== "simulated"
+        ? <div className="border-b border-ok bg-ok/10 px-4 py-2 text-center text-xs text-ok">{fill(t.market.onchainBanner, { network: catalog.settlement.network ?? "", per: usd(catalog.caps.perPaymentUsd), day: usd(catalog.caps.dailyUsd), spent: usd(catalog.caps.spentTodayUsd) })}{catalog.settlement.escrowUrl && <> · <a className="underline" target="_blank" rel="noreferrer" href={catalog.settlement.escrowUrl}>{t.market.escrowWallet} ↗</a></>}</div>
+        : <div className="border-b border-warn bg-warn/10 px-4 py-2 text-center text-xs font-semibold text-warn">{t.market.simulatedBanner}</div>}
       <header className="border-b border-border px-5 py-5 sm:px-8">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4">
           <div>
@@ -338,13 +360,24 @@ export default function MarketConsole() {
                   <div><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{t.market.status}</p><p className={`mt-1 font-mono text-lg ${statusTone}`}>{t.market.statuses[deal.status]}</p></div>
                   <div className="text-right"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{t.market.escrow}</p><p className="mt-1 text-sm text-foreground">{deal.funds}</p></div>
                 </div>
+                {deal.settlement === "simulated" && <p className="mt-3 border border-warn px-3 py-2 text-center font-mono text-xs font-bold tracking-[0.14em] text-warn">SIMULATED</p>}
+                <div className="mt-3 space-y-2">
+                  <TxLink label={t.market.txLocked} tx={deal.fundingTx} />
+                  <TxLink label={deal.status === "refunded" ? t.market.txRefunded : t.market.txReleased} tx={deal.payoutTx} />
+                </div>
+                {deal.paymentError && (
+                  <div className="mt-3 border border-danger/60 bg-danger/10 p-3 text-sm text-danger">
+                    <p>{deal.paymentError}</p>
+                    {deal.status === "awaiting_approval" && !deal.fundingRequiresHuman && <button type="button" disabled={busy} onClick={() => void retryFunding()} className="mt-2 border border-danger px-3 py-1 text-xs font-semibold hover:bg-danger/10 disabled:opacity-50">{t.market.retryPayment}</button>}
+                  </div>
+                )}
               </>
             )}
           </Panel>
 
           {deal && (
             <Panel title={t.market.graphHeading}>
-              <GraphTile risk={deal.providerRisk} />
+              <GraphTile risk={deal.providerRisk} advisory={catalog?.graphGate === "advisory"} />
             </Panel>
           )}
 

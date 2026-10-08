@@ -22,10 +22,20 @@ export function fundingRequiresHuman(amountUsd: number): boolean {
   return amountUsd > AUTO_APPROVE_LIMIT_USD;
 }
 
+/**
+ * MARKET_GRAPH_GATE=advisory shows the provider's Graph evidence without
+ * letting it force a human — for testnet provider wallets, which have no
+ * mainnet history to read. The default, "enforce", gates on it.
+ */
+export function graphGateMode(): "enforce" | "advisory" {
+  return process.env.MARKET_GRAPH_GATE?.trim().toLowerCase() === "advisory" ? "advisory" : "enforce";
+}
+
 /** Every reason a deal's funding needs a human; empty means agents may proceed. */
-export function fundingGate(amountUsd: number, risk: ProviderRisk): string[] {
+export function fundingGate(amountUsd: number, risk: ProviderRisk, mode = graphGateMode()): string[] {
   const reasons: string[] = [];
   if (fundingRequiresHuman(amountUsd)) reasons.push(`$${amountUsd} is above the $${AUTO_APPROVE_LIMIT_USD} limit agents may spend alone`);
+  if (mode === "advisory") return reasons;
   if (!risk.available) {
     reasons.push("The provider's wallet history could not be read from The Graph");
   } else if (risk.score !== null && risk.score >= RISK_GATE_THRESHOLD) {

@@ -30,7 +30,7 @@ test("a minimum rating excludes weaker providers", () => {
 
 test("discovery fails clearly when nothing qualifies", () => {
   assert.throws(() => discover(SEED_PROVIDERS, { skill: "dance" }), /No provider offers/);
-  assert.throws(() => discover(SEED_PROVIDERS, { skill: "contract_audit", maxPriceUsd: 5 }), /cheapest costs \$25/);
+  assert.throws(() => discover(SEED_PROVIDERS, { skill: "contract_audit", maxPriceUsd: 1 }), /cheapest costs \$2/);
   assert.throws(() => discover(SEED_PROVIDERS, { skill: "translate", minRating: 5 }), /rating/);
   assert.throws(() => discover(SEED_PROVIDERS, { skill: "translate", maxPriceUsd: -1 }), RangeError);
 });

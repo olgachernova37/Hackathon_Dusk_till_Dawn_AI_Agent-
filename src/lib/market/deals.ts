@@ -11,6 +11,8 @@ import { judge, settle, type JudgeOptions } from "./judge.ts";
 import { doWork, type WorkerOptions } from "./worker.ts";
 import { fundingGate } from "./policy.ts";
 import { checkProviderWallet } from "./provider-risk.ts";
+import { settlementRail, type TransferResult } from "./settlement.ts";
+import { releaseSpend, reserveSpend } from "./spend.ts";
 import type { Deal, DealEvent, DiscoveryQuery, DiscoveryResult, Provider, ProviderRiskCheck, Verdict } from "./types.ts";
 
 /**
@@ -38,6 +40,7 @@ export class MarketError extends Error {
 const keys = {
   deal: (id: string) => `market:deal:${id}`,
   payout: (id: string) => `market:payout:${id}`,
+  funding: (id: string) => `market:funding:${id}`,
   approval: (actionId: string) => `market:approval:${actionId}`,
   ledger: "market:ledger",
 };
@@ -114,20 +117,68 @@ async function consumeApproval(actionId: string | undefined): Promise<HumanGateR
   return receipt;
 }
 
-// ------------------------------------------------------------------ payouts
+// ------------------------------------------------------------------ payments
+
+/**
+ * Atomic "at most once" claim. A claim marked "retryable" (the payment was
+ * refused before anything was sent) may be taken again; any other value means
+ * a payment is in flight or done, and a second one is refused.
+ */
+async function claimOnce(key: string, value: string): Promise<boolean> {
+  if (await kv().setIfAbsent(key, value, retain)) return true;
+  if ((await kv().get<string>(key)) !== "retryable") return false;
+  await kv().set(key, value, retain);
+  return true;
+}
+
+async function failPayment(deal: Deal, key: string, result: Extract<TransferResult, { ok: false }>, what: string): Promise<never> {
+  // Refused before sending → safe to retry. Sent but unconfirmed → never retried automatically.
+  if (!result.broadcast) await kv().set(key, "retryable", retain);
+  const message = result.broadcast
+    ? `${what} may have been sent and is not retried automatically — check the explorer. ${result.reason}`
+    : `${what} failed before anything was sent: ${result.reason}`;
+  await saveDeal({ ...deal, paymentError: message });
+  throw new MarketError("PAYMENT_FAILED", message, 502);
+}
+
+/** buyer → escrow, inside the hard spending caps, at most once per deal. */
+async function lockFunds(deal: Deal, note: string): Promise<Deal> {
+  const reserved = await reserveSpend(deal.amountUsd);
+  if (!reserved.ok) {
+    await saveDeal({ ...deal, paymentError: reserved.reason });
+    throw new MarketError("SPEND_CAP", reserved.reason, 409);
+  }
+  if (!(await claimOnce(keys.funding(deal.id), "pending"))) {
+    await releaseSpend(deal.amountUsd);
+    throw new MarketError("ALREADY_FUNDED", "This deal is already being funded or was funded", 409);
+  }
+  const result = await settlementRail().lock(deal.amountUsd);
+  if (!result.ok) {
+    if (!result.broadcast) await releaseSpend(deal.amountUsd);
+    return failPayment(deal, keys.funding(deal.id), result, "Locking the funds");
+  }
+  await kv().set(keys.funding(deal.id), result.tx?.hash ?? "simulated", retain);
+  const where = result.tx ? ` — tx ${result.tx.hash}` : " (simulated)";
+  const funded = await transition({ ...deal, paymentError: undefined, ...(result.tx && { fundingTx: result.tx }) }, "approve", `${note}${where}`);
+  return funded;
+}
 
 async function payOut(deal: Deal, event: "release" | "refund", note: string): Promise<Deal> {
   // At most one payout per deal, even under concurrent requests.
-  const claimed = await kv().setIfAbsent(keys.payout(deal.id), event, retain);
-  if (!claimed) throw new MarketError("ALREADY_SETTLED", "This deal was already paid out", 409);
-  const settled = await transition(deal, event, note);
+  if (!(await claimOnce(keys.payout(deal.id), event))) throw new MarketError("ALREADY_SETTLED", "This deal was already paid out", 409);
+  const rail = settlementRail();
+  const result = event === "release" ? await rail.release(deal.payTo, deal.amountUsd) : await rail.refund(deal.amountUsd);
+  if (!result.ok) return failPayment(deal, keys.payout(deal.id), result, event === "release" ? "Paying the provider" : "Refunding the buyer");
+  const where = result.tx ? ` — tx ${result.tx.hash}` : " (simulated)";
+  const settled = await transition({ ...deal, paymentError: undefined, ...(result.tx && { payoutTx: result.tx }) }, event, `${note}${where}`);
   await kv().append(keys.ledger, {
     at: Date.now(),
     dealId: deal.id,
     event,
     amountUsd: deal.amountUsd,
-    to: event === "release" ? deal.payTo : deal.buyer,
-    settlement: "simulated",
+    to: event === "release" ? deal.payTo : deal.buyerAddress ?? deal.buyer,
+    settlement: deal.settlement,
+    tx: result.tx?.hash ?? null,
   });
   return settled;
 }
@@ -144,6 +195,8 @@ export interface CreateDealResult {
   discovery: DiscoveryResult;
   /** Set when a human must approve funding before anything is locked. */
   approvalActionId?: string;
+  /** Set when agents approved the deal but the payment itself failed. */
+  paymentError?: string;
 }
 
 export interface CreateDealOptions {
@@ -184,7 +237,8 @@ export async function createDeal(input: CreateDealInput, options: CreateDealOpti
     payTo: provider.payTo,
     amountUsd: provider.priceUsd,
     status: "awaiting_approval",
-    settlement: "simulated",
+    settlement: settlementRail().mode,
+    buyerAddress: settlementRail().buyerAddress,
     fundingRequiresHuman: needsHuman,
     fundingReasons,
     providerRisk,
@@ -193,8 +247,15 @@ export async function createDeal(input: CreateDealInput, options: CreateDealOpti
   };
 
   if (!needsHuman) {
-    deal = await saveDeal(applyEvent(deal, "approve", `$${deal.amountUsd} is within the limit and the provider's wallet passed the Graph check — agents approved it without a human; funds locked in escrow`, now));
-    return { deal, discovery };
+    deal = await saveDeal(deal);
+    try {
+      deal = await lockFunds(deal, `$${deal.amountUsd} is within the limit and no gate was triggered — agents approved it without a human; funds locked in escrow`);
+      return { deal, discovery };
+    } catch (error) {
+      if (!(error instanceof MarketError)) throw error;
+      // Keep the deal so it can be seen and retried; the error says why it is not funded.
+      return { deal: (await getDeal(deal.id)) ?? deal, discovery, paymentError: error.message };
+    }
   }
 
   const action = approvalAction(
@@ -208,13 +269,23 @@ export async function createDeal(input: CreateDealInput, options: CreateDealOpti
   return { deal, discovery, approvalActionId: action.id };
 }
 
-/** Step 2 for large deals: lock funds once a human approved with Selfie Check. */
+/**
+ * Step 2: lock the funds. For large deals only after a human approved with
+ * Selfie Check; for small deals this retries a payment that failed before
+ * anything was sent.
+ */
 export async function confirmFunding(dealId: string): Promise<Deal> {
   const deal = await requireDeal(dealId);
   if (deal.status !== "awaiting_approval") throw new MarketError("INVALID_TRANSITION", `Deal is already ${deal.status}`, 409);
-  const receipt = await consumeApproval(deal.fundingActionId);
-  const who = receipt.credentialType === "selfie_check" ? "Selfie Check" : receipt.credentialType;
-  return transition(deal, "approve", `Human approved with ${who}; $${deal.amountUsd} locked in escrow`);
+  if (!deal.fundingRequiresHuman) return lockFunds(deal, "Retried by the agents; funds locked in escrow");
+  // A receipt is consumed once and remembered on the deal, so a payment that
+  // failed before sending can be retried without a second Selfie Check.
+  let approved = deal;
+  if (!deal.fundingApprovedBy) {
+    const receipt = await consumeApproval(deal.fundingActionId);
+    approved = await saveDeal({ ...deal, fundingApprovedBy: receipt.credentialType === "selfie_check" ? "Selfie Check" : receipt.credentialType });
+  }
+  return lockFunds(approved, `Human approved with ${approved.fundingApprovedBy}; $${deal.amountUsd} locked in escrow`);
 }
 
 /** Step 3: the provider hands in its work (typed in by a person). */
@@ -271,8 +342,12 @@ export async function judgeDeal(dealId: string, options: JudgeOptions = {}): Pro
 export async function resolveDispute(dealId: string): Promise<Deal> {
   const deal = await requireDeal(dealId);
   if (deal.status !== "disputed" || !deal.proposedOutcome) throw new MarketError("INVALID_TRANSITION", `Deal is ${deal.status}, not disputed`, 409);
-  await consumeApproval(deal.disputeActionId);
-  return payOut(deal, deal.proposedOutcome, `Human confirmed with Selfie Check: ${deal.proposedOutcome}`);
+  let approved = deal;
+  if (!deal.disputeApprovedBy) {
+    const receipt = await consumeApproval(deal.disputeActionId);
+    approved = await saveDeal({ ...deal, disputeApprovedBy: receipt.credentialType === "selfie_check" ? "Selfie Check" : receipt.credentialType });
+  }
+  return payOut(approved, deal.proposedOutcome, `Human confirmed with ${approved.disputeApprovedBy}: ${deal.proposedOutcome}`);
 }
 
 /** Buyer withdraws before anything was locked. */

@@ -134,6 +134,13 @@ export const cs: Dictionary = {
   },
 
   market: {
+    graphAdvisory: "Jen pro informaci (MARKET_GRAPH_GATE=advisory): obchod to nezastaví",
+    onchainBanner: "Skutečné testovací peníze: USDC na {network} (testnet). Pevné limity v kódu: {per} za platbu, {day} za den (dnes utraceno: {spent})",
+    escrowWallet: "peněženka escrow",
+    txLocked: "Uzamčeno na blockchainu (kupující → escrow)",
+    txReleased: "Vyplaceno na blockchainu (escrow → dodavatel)",
+    txRefunded: "Vráceno na blockchainu (escrow → kupující)",
+    retryPayment: "Zopakovat platbu",
     voiceOn: "🔊 Hlas zapnut",
     voiceOff: "🔈 Hlas vypnut",
     voice: {
@@ -159,7 +166,7 @@ export const cs: Dictionary = {
     manualDelivery: "Nebo zadejte výsledek sami",
     deliveredByAgent: "Hotovo agentem dodavatele",
     deliveredManually: "Zadáno ručně",
-    simulatedBanner: "Vypořádání je simulované: escrow je záznam v evidenci, ne prostředky na blockchainu. Agenti-dodavatelé jsou ukázkoví.",
+    simulatedBanner: "SIMULATED — peníze se nehýbou: escrow je záznam v evidenci. Nastavte klíče peněženek pro vypořádání na testnetu.",
     product: "Tržiště agentů",
     console: "Konzole obchodu",
     backToCopilot: "Konzole kopilota",
@@ -200,7 +207,7 @@ export const cs: Dictionary = {
     riskScore: "Skóre rizika",
     gateHeading: "Lidská kontrola",
     gateDone: "Schváleno člověkem přes Selfie Check.",
-    gateSkipped: "Není potřeba: částka do {limit} a peněženka dodavatele prošla kontrolou The Graph. Agenti to zvládli sami.",
+    gateSkipped: "Není potřeba: částka do {limit} a nic dodavatele neoznačilo jako rizikového. Agenti to zvládli sami.",
     providerHeading: "4 · Agent-dodavatel odevzdává práci",
     deliveryLabel: "Výsledek",
     deliverySimulated: "Pro případ bez modelu; obchod výsledek označí jako zadaný ručně.",
