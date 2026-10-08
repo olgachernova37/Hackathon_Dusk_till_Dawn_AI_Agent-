@@ -42,6 +42,12 @@ deals and uncertain verdicts wait for the same Selfie Check gate. Payments are
 real USDC transfers on Ethereum Sepolia (testnet) through a custodial escrow
 wallet (not a smart contract); the agents run on Gemini on our own server.
 
+One small deal, end to end on Ethereum Sepolia (testnet USDC, 9 Oct 2026):
+[lock, buyer → escrow](https://sepolia.etherscan.io/tx/0x92fc70b2c6ccac4daa0033c69ac0f395c0f372f91c39e21593fa399e398260a4) ·
+[payout, escrow → provider](https://sepolia.etherscan.io/tx/0xcdebdd2403ad5bd70948d96b11ef1469762405ad655841fcdda739c6f8507caf).
+The provider's payout address is our own escrow wallet (we have no second
+party's wallet), so this payout moves USDC back to the same wallet.
+
 Three ideas come from [SingIt](https://github.com/bubon-ik/SingItAI) by bubon-ik
 (MIT), re-implemented here with no code copied: a per-job spending limit, one
 payout address per provider, and paying only after delivery.
