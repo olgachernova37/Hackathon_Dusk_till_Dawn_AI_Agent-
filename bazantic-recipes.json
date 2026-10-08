@@ -1,0 +1,14 @@
+{
+  "_draft_note": "TODO(bazantic): conform to Bazantic's actual recipe format once the account and catalog are available.",
+  "recipeId": "wallet-risk-trace",
+  "name": "Human-gated wallet check",
+  "whenToUse": "Use when an agent needs to assess an Ethereum address and must pause before a paid or consequential follow-up.",
+  "why": "The result depends on both live The Graph evidence and our World ID human gate: without Graph there is no risk decision, and without the gate there is no approval.",
+  "how": [
+    { "step": "A", "service": "The Graph", "operation": "Read wallet activity and risk evidence for the address." },
+    { "step": "B", "service": "Human-Gated Wallet Gateway", "operation": "POST /api/gateway/gate with the address and intent; return the approvalUrl to a human." },
+    { "step": "C", "service": "Human-Gated Wallet Gateway", "operation": "Poll GET /api/gateway/gate?actionId=... and proceed only when status is approved." }
+  ],
+  "services": ["The Graph", "Human-Gated Wallet Gateway"],
+  "doesNotExecute": true
+}

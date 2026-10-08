@@ -1,0 +1,143 @@
+openapi: 3.1.0
+info:
+  title: Human-Gated Wallet Gateway
+  version: 0.1.0
+  description: Prepare and poll human approval for a wallet-risk recipe. The service never fabricates risk data and never approves an action itself.
+servers:
+  - url: "{PUBLIC_BASE_URL}"
+    variables:
+      PUBLIC_BASE_URL:
+        default: https://echobrief.online
+paths:
+  /api/gateway/gate:
+    post:
+      summary: Prepare a human-gated wallet action
+      description: Use this when an external agent needs a live Graph risk assessment before a paid or consequential step. The endpoint reads the address, creates an exact pending action, and returns an approval URL for a human. It does not approve or execute the action.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GateRequest'
+      responses:
+        '200':
+          description: Pending action and human approval link
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateCreated'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '503':
+          description: Live Graph data is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Poll human approval status
+      description: Use this after creating an action to poll whether the human has approved it. Continue only when status is approved; a prepared action is not permission to spend.
+      parameters:
+        - in: query
+          name: actionId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Current action status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateStatus'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /api/gateway/action:
+    get:
+      summary: Retrieve a pending action for an approval page
+      description: Use this from the human approval UI when opening an approval URL. The action is read-only; approval remains a separate World ID step.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Pending action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentAction'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          description: Action not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  responses:
+    InvalidRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+    GateRequest:
+      type: object
+      required: [address, intent]
+      properties:
+        address: { type: string, description: Ethereum address to assess }
+        intent: { type: string, description: Human-readable action intent }
+        costUsd: { type: number, minimum: 0, default: 0.05 }
+    GateCreated:
+      type: object
+      required: [actionId, actionHash, riskScore, riskReasons, requiresHuman, approvalUrl]
+      properties:
+        actionId: { type: string }
+        actionHash: { type: string }
+        riskScore: { type: integer, minimum: 0, maximum: 100 }
+        riskReasons: { type: array, items: { type: string } }
+        requiresHuman: { type: boolean }
+        approvalUrl: { type: string, format: uri }
+    GateStatus:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [awaiting_human, approved, executed, not_found] }
+        receipt: { $ref: '#/components/schemas/HumanGateReceipt' }
+    AgentAction:
+      type: object
+      required: [id, kind, summary, payload, riskScore, riskReasons, costUsd, requiresHuman, createdAt]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [read_only, paid_call, recipe_run] }
+        summary: { type: string }
+        payload: { type: object, additionalProperties: true }
+        riskScore: { type: integer, minimum: 0, maximum: 100 }
+        riskReasons: { type: array, items: { type: string } }
+        costUsd: { type: number }
+        requiresHuman: { type: boolean }
+        createdAt: { type: integer }
+    HumanGateReceipt:
+      type: object
+      required: [actionId, actionHash, nullifierHash, credentialType, verifiedAt, expiresAt]
+      properties:
+        actionId: { type: string }
+        actionHash: { type: string }
+        nullifierHash: { type: string }
+        credentialType: { type: string, enum: [selfie_check, device, orb] }
+        verifiedAt: { type: integer }
+        expiresAt: { type: integer }
+        continuity: { type: object, additionalProperties: true }

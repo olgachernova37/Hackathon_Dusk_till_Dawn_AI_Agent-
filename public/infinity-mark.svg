@@ -1,0 +1,11 @@
+<svg width="720" height="420" viewBox="0 0 720 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="120" y1="100" x2="610" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF2AE"/><stop offset="0.22" stop-color="#F3C969"/><stop offset="0.5" stop-color="#FFF5BD"/><stop offset="0.72" stop-color="#C68A2D"/><stop offset="1" stop-color="#F5D77E"/>
+    </linearGradient>
+    <filter id="shadow" x="20" y="60" width="680" height="300" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#7C5318" flood-opacity="0.45"/></filter>
+  </defs>
+  <path d="M360 210C304 155 243 103 175 103C105 103 57 147 57 210C57 273 105 317 175 317C243 317 304 265 360 210ZM360 210C416 155 477 103 545 103C615 103 663 147 663 210C663 273 615 317 545 317C477 317 416 265 360 210Z" stroke="#6E4818" stroke-width="29" stroke-linecap="round" stroke-linejoin="round" opacity="0.65" filter="url(#shadow)"/>
+  <path d="M360 210C304 155 243 103 175 103C105 103 57 147 57 210C57 273 105 317 175 317C243 317 304 265 360 210ZM360 210C416 155 477 103 545 103C615 103 663 147 663 210C663 273 615 317 545 317C477 317 416 265 360 210Z" stroke="url(#gold)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M80 205C84 155 124 126 176 126C239 126 302 180 360 235C418 180 481 126 544 126C596 126 636 155 640 205" stroke="#FFF8D0" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+</svg>
