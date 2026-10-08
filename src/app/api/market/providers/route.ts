@@ -2,7 +2,7 @@ import { AUTO_APPROVE_LIMIT_USD, NETWORKS, graphGateMode, listProviders, listSki
 
 /**
  * The provider catalog buyer agents discover from (demo data — see
- * HACKATHON.md), plus how money moves right now: the settlement mode, the
+ * README.md), plus how money moves right now: the settlement mode, the
  * escrow wallet and the hard spending caps, so the console can label it.
  */
 export async function GET(): Promise<Response> {

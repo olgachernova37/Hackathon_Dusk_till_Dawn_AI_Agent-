@@ -6,7 +6,7 @@
  * wallet the risk engine flags, a wallet the Graph could not read, and any
  * judgement the judge is unsure of, waits for a World ID Selfie Check.
  * A per-job spending limit like this follows SingIt's per-purchase limit
- * (github.com/bubon-ik/SingItAI, MIT) — credited in HACKATHON.md.
+ * (github.com/bubon-ik/SingItAI, MIT) — credited in README.md.
  */
 import { RISK_GATE_THRESHOLD } from "../types.ts";
 import type { ProviderRisk } from "./types.ts";

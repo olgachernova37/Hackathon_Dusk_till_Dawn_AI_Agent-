@@ -40,8 +40,11 @@ Buyer agents discover provider agents, lock payment in escrow, and an AI judge
 checks the delivery before money moves. Small deals run agent-to-agent; large
 deals and uncertain verdicts wait for the same Selfie Check gate. Payments are
 real USDC transfers on Ethereum Sepolia (testnet) through a custodial escrow
-wallet; the agents run on Gemini. What is base, what is new and what is real:
-[HACKATHON.md](HACKATHON.md).
+wallet (not a smart contract); the agents run on Gemini on our own server.
+
+Three ideas come from [SingIt](https://github.com/bubon-ik/SingItAI) by bubon-ik
+(MIT), re-implemented here with no code copied: a per-job spending limit, one
+payout address per provider, and paying only after delivery.
 
 ```bash
 npm run dev
@@ -129,14 +132,13 @@ An external agent can **prepare** an action. It can never **approve** one.
 | `src/app/[lang]/dashboard/` | three-pane operator console |
 | `src/i18n/` | English / Czech / Ukrainian dictionaries, locale negotiation in `src/proxy.ts` |
 | [`SKILL.md`](SKILL.md) | The Graph skill, in the official skills format |
-| [`FEEDBACK.md`](FEEDBACK.md) | World ID integration feedback (required deliverable) |
 | [`openapi.yaml`](openapi.yaml) | spec Bazantic builds the gateway from |
 | [`PLAN.md`](PLAN.md) | the build plan, including how the work was split across agents |
 
 ## Sponsor submission details
 
 - **The Graph** — Best AI Tooling / AI Use Case (From Scratch): see [`SKILL.md`](SKILL.md)
-- **World** — Selfie Check: see [`FEEDBACK.md`](FEEDBACK.md)
+- **World** — Selfie Check
 - **Bazantic** — Best Recipe using ETHGlobal Sponsor APIs: gateway **EchoBrief**, recipe **`eth-transfer-risk-check-with-human-approval`**; Bazantic username (GitHub): **olgachernova37**
 
 Built from scratch during ETHOnline 2026. Stack: Next.js 16, TypeScript, Tailwind 4, viem, Upstash

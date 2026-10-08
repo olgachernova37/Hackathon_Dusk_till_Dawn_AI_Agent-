@@ -75,7 +75,7 @@
 
 ### 🎬 Сцена 4 — Чесно про межі + підсумок · 1:15–1:30
 
-**Екран:** `HACKATHON.md` на GitHub, розділ **What is real and what is not**
+**Екран:** `README.md` на GitHub, розділ **New: agent marketplace**
 
 > "To be honest: this is testnet money, and the escrow is a wallet held by our server, not a smart contract yet. The provider agents run on our server, on Gemini. Agents find each other, get paid through escrow, and a human steps in only when the risk is real. Thank you."
 
@@ -94,5 +94,5 @@
 ## 5. Запасний план
 
 - **Суддя каже «Uncertain»:** це чесно — система не платить навмання, угода чекає людину. Скажи це словами.
-- **Транзакція не пройшла** (червоний рядок з помилкою): натисни **Retry the payment** один раз. Якщо знову ні — запиши те, що є, і покажи справжню транзакцію з `HACKATHON.md`.
+- **Транзакція не пройшла** (червоний рядок з помилкою): натисни **Retry the payment** один раз. Якщо знову ні — запиши те, що є, і покажи справжню транзакцію на Etherscan: `https://sepolia.etherscan.io/tx/0xbd0c56e98c79c02cf8d596d2e924deb7b46a7b7d404542edbff329686ef7e96f`.
 - **Selfie Check не працює:** покажи лише картку **Human gate** і поясни словами.

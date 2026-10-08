@@ -22,7 +22,7 @@ export interface Provider {
   priceUsd: number;
   /**
    * The only address this provider is ever paid at. A payout to any other
-   * address is refused. (Idea credited to SingIt — see HACKATHON.md.)
+   * address is refused. (Idea credited to SingIt — see README.md.)
    */
   payTo: string;
   /** Average rating, 0-5. */

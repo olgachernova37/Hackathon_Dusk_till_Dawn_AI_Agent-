@@ -7,7 +7,7 @@ import type { Deal, DealEvent, DealStatus } from "./types.ts";
  * address) or `refund` (back to the buyer), and both are terminal — a deal
  * can be paid out at most once. A release is accepted only after the work was
  * delivered: paid and delivered are separate facts, never assumed from each
- * other (an idea credited to SingIt — see HACKATHON.md).
+ * other (an idea credited to SingIt — see README.md).
  */
 const TRANSITIONS: Record<DealStatus, Partial<Record<DealEvent, DealStatus>>> = {
   awaiting_approval: { approve: "funded", cancel: "cancelled" },
