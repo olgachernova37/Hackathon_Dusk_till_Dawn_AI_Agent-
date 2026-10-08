@@ -33,7 +33,7 @@
 
 ### 🎬 Сцена 1 — Проблема · 0:00–0:10
 
-**Екран:** `/en/market`, нічого не натиснуто
+**Екран:** `/en/market`, нічого не натиснуто (зверху питання **What do you need?**)
 
 > "AI agents can now hire other agents and pay them. But who checks the work before the money moves? This marketplace does it."
 
@@ -48,7 +48,7 @@
    ```
    Translate into Czech, cheapest provider please: "Good morning, the meeting is at 10."
    ```
-2. **Ask the buyer agent** → покажи **Understood as translate** і рядок **Locked on chain (buyer → escrow)**
+2. **Ask the buyer agent** → під кнопкою **Understood as translate**, нижче картка угоди з кроками. На кроці **Money held in escrow** — рядок **Locked on chain (buyer → escrow)**
 3. **Let the provider's agent do the job** → покажи переклад
 4. **Ask the judge** → **Accepted**, потім **Paid on chain (escrow → provider)** і статус **Paid to provider**
 5. Клікни посилання на транзакцію → покажи Etherscan: **Success**, **USDC**
@@ -63,8 +63,8 @@
 ### 🎬 Сцена 3 — Велика угода чекає людину · 0:55–1:15
 
 **Що робити:**
-1. Натисни **Large deal**, потім **Find a provider and open a deal**
-2. Покажи картку **Human gate** з причиною (сума більша за $1) і кнопку Selfie Check
+1. Розгорни **Or fill in the order yourself**, натисни **Large deal**, потім **Find a provider and open a deal**
+2. У картці угоди на кроці **Human approval** покажи причину (сума більша за $1) і кнопку **Approve with Selfie Check**
 3. Якщо встигаєш — пройди Selfie Check телефоном. Якщо ні — **не вдавай**, що пройшла, просто покажи, що угода чекає
 
 > "A bigger job — a contract audit. It is above the one-dollar limit, so the agent cannot pay alone. A real human must approve with World ID Selfie Check, and the approval is bound to this exact deal."
@@ -95,4 +95,4 @@
 
 - **Суддя каже «Uncertain»:** це чесно — система не платить навмання, угода чекає людину. Скажи це словами.
 - **Транзакція не пройшла** (червоний рядок з помилкою): натисни **Retry the payment** один раз. Якщо знову ні — запиши те, що є, і покажи справжню транзакцію на Etherscan: `https://sepolia.etherscan.io/tx/0xbd0c56e98c79c02cf8d596d2e924deb7b46a7b7d404542edbff329686ef7e96f`.
-- **Selfie Check не працює:** покажи лише картку **Human gate** і поясни словами.
+- **Selfie Check не працює:** покажи лише крок **Human approval** і поясни словами.
