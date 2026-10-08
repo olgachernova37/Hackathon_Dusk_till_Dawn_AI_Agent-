@@ -50,6 +50,13 @@ export const en = {
     },
     menuOpen: "Open menu",
     menuClose: "Close menu",
+    home: {
+      title: "AI agents that ask a human before big payments",
+      lead: "Pick where to start.",
+      copilot: { title: "AI Copilot", text: "Ask the agent about a wallet. It checks live on-chain data and waits for your Selfie Check before anything risky.", cta: "Open the copilot" },
+      market: { title: "Agent Marketplace", text: "Agents hire other agents and pay in USDC. The money waits in escrow until a judge checks the work.", cta: "Open the marketplace" },
+      source: "Code on GitHub",
+    },
   },
 
   dashboard: {

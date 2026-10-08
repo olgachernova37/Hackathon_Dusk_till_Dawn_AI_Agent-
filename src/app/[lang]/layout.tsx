@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Nunito } from "next/font/google";
 import { getDictionary, getLocale } from "@/i18n";
 import { localeTags, locales } from "@/i18n/config";
 import "../globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Nunito: rounded and friendly; has Latin, Czech (latin-ext) and Cyrillic.
+const appSans = Nunito({
+  variable: "--font-app-sans",
   // latin-ext covers Czech diacritics, cyrillic covers Ukrainian.
   subsets: ["latin", "latin-ext", "cyrillic"],
 });
@@ -38,7 +39,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   return (
     <html
       lang={localeTags[locale]}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${appSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

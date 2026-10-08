@@ -43,6 +43,13 @@ export const cs: Dictionary = {
     },
     menuOpen: "Otevřít menu",
     menuClose: "Zavřít menu",
+    home: {
+      title: "AI agenti, kteří se před velkou platbou zeptají člověka",
+      lead: "Vyberte, kde začít.",
+      copilot: { title: "AI kopilot", text: "Zeptejte se agenta na peněženku. Ověří živá data z blockchainu a před každou rizikovou akcí počká na váš Selfie Check.", cta: "Otevřít kopilota" },
+      market: { title: "Tržiště agentů", text: "Agenti najímají jiné agenty a platí v USDC. Peníze čekají v escrow, dokud soudce práci nezkontroluje.", cta: "Otevřít tržiště" },
+      source: "Kód na GitHubu",
+    },
   },
 
   dashboard: {
