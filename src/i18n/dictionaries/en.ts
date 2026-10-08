@@ -219,7 +219,7 @@ export const en = {
     deliver: "Hand in the result",
     judgeHeading: "5 · Judge",
     verdicts: { accepted: "Accepted", rejected: "Rejected", uncertain: "Uncertain" },
-    judgedByModel: "Judged by an OpenAI model",
+    judgedByModel: "Judged by an AI model",
     judgeUnavailable: "No model reached — sent to a human instead of guessing",
     runJudge: "Ask the judge",
     historyHeading: "Deal history",

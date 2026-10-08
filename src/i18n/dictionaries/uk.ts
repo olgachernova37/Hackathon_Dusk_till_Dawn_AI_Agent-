@@ -215,7 +215,7 @@ export const uk: Dictionary = {
     deliver: "Здати результат",
     judgeHeading: "5 · Суддя",
     verdicts: { accepted: "Прийнято", rejected: "Відхилено", uncertain: "Не впевнений" },
-    judgedByModel: "Перевірено моделлю OpenAI",
+    judgedByModel: "Перевірено ШІ-моделлю",
     judgeUnavailable: "Модель недоступна — рішення передано людині замість здогадки",
     runJudge: "Запитати суддю",
     historyHeading: "Історія угоди",

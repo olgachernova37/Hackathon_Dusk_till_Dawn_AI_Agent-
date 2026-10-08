@@ -214,7 +214,7 @@ export const cs: Dictionary = {
     deliver: "Odevzdat výsledek",
     judgeHeading: "5 · Soudce",
     verdicts: { accepted: "Přijato", rejected: "Zamítnuto", uncertain: "Nejistý" },
-    judgedByModel: "Posouzeno modelem OpenAI",
+    judgedByModel: "Posouzeno AI modelem",
     judgeUnavailable: "Model nedostupný — rozhodnutí předáno člověku místo hádání",
     runJudge: "Zeptat se soudce",
     historyHeading: "Historie obchodu",

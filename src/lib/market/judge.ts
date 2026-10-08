@@ -58,7 +58,7 @@ export function parseVerdict(raw: string): Verdict {
 }
 
 export async function judge(input: JudgeInput, options: JudgeOptions = {}): Promise<Verdict> {
-  if (!hasModel(options)) return unavailable("No OPENAI_API_KEY is configured, so no model judged this delivery");
+  if (!hasModel(options)) return unavailable("No model key is configured (GEMINI_API_KEY or OPENAI_API_KEY), so no model judged this delivery");
   const result = await chat({
     ...options,
     json: true,
