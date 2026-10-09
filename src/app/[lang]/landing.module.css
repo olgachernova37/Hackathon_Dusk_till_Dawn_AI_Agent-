@@ -402,6 +402,47 @@
   animation: in-mark 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1.6s both;
 }
 
+.robotMark {
+  position: fixed;
+  right: clamp(24px, 7vw, 120px);
+  bottom: clamp(96px, 17vh, 170px);
+  z-index: 3;
+  width: clamp(96px, 10vw, 150px);
+  pointer-events: none;
+  animation: in-mark 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1.3s both;
+}
+
+.robotMarkImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Silver like the particle wave, with the screen eyes still faintly blue. */
+  filter: grayscale(0.85) contrast(1.08) brightness(0.95) drop-shadow(0 0 22px rgba(255, 255, 255, 0.22));
+  animation: robot-float 6s ease-in-out 2.8s infinite;
+}
+
+@keyframes robot-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .robotMark {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .robotMarkImg {
+    animation: none;
+  }
+}
+
 .cornerMarkImg {
   display: block;
   width: 100%;

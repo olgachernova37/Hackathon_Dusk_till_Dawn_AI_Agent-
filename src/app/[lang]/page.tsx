@@ -117,6 +117,11 @@ export default async function Home() {
           </div>
         </main>
 
+        {/* Robot head mascot, toned to the page: silver, softly glowing, slowly floating. */}
+        <div className={styles.robotMark} aria-hidden="true">
+          <Image src="/robot-head.webp" alt="" width={400} height={379} className={styles.robotMarkImg} priority />
+        </div>
+
         {/* Gold infinity mark, always visible in the bottom-right corner. */}
         <div className={styles.cornerMark} aria-hidden="true">
           <Image src="/infinity-mark.svg" alt="" width={720} height={420} className={styles.cornerMarkImg} />

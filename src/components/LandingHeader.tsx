@@ -19,15 +19,6 @@ export type LandingHeaderStrings = {
   switchTo: string;
 };
 
-const REPO = "https://github.com/olgachernova37/Matching";
-
-const NAV_LINKS = [
-  { key: "howItWorks", href: `${REPO}#the-idea-bind-the-proof-to-the-action-not-the-session`, appear: "appearScale", delay: "0.16s" },
-  { key: "sponsors", href: `${REPO}#how-each-sponsor-is-load-bearing`, appear: "appearSoft", delay: "0.28s" },
-  { key: "security", href: `${REPO}#security-properties-each-with-a-test`, appear: "appearScale", delay: "0.40s" },
-  { key: "gatewayApi", href: `${REPO}#try-the-gateway-as-an-agent-would`, appear: "appearSoft", delay: "0.52s" },
-] as const;
-
 /** Entrance delay, read by the `.appear*` classes as `var(--d)`. */
 const delay = (value: string) => ({ "--d": value }) as CSSProperties;
 
@@ -94,20 +85,6 @@ export default function LandingHeader({ locale, strings }: { locale: Locale; str
         </Link>
 
         <nav id="site-nav" className={styles.nav} aria-label={strings.navLabel}>
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.key}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${styles.navLink} ${styles.appear} ${styles[link.appear]}`}
-              data-appear
-              style={delay(link.delay)}
-              onClick={() => setOpen(false)}
-            >
-              {strings.nav[link.key]}
-            </a>
-          ))}
           <div className={`${styles.switcher} ${styles.menuSwitcher}`} onClick={() => setOpen(false)}>
             {switcher}
           </div>
