@@ -524,19 +524,30 @@
 }
 
 .headline em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.08em;
-  letter-spacing: -0.03em;
-  color: #9a9a9a;
+  font-style: normal;
+  font-weight: 700;
+  color: #fff;
   animation: in-em 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.72s both;
+}
+
+/* A soft dark glass box behind the headline and lead, so they stay readable over the video. */
+.textPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4px;
+  padding: 22px clamp(18px, 3vw, 36px) 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background: rgba(8, 8, 10, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .lede {
   max-width: var(--lede-max);
   margin-top: 18px;
-  color: #9a9a9a;
+  color: #d0d0d0;
   font-size: var(--lede);
   font-weight: 400;
   line-height: 1.55;

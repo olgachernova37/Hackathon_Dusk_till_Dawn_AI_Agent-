@@ -74,22 +74,24 @@ export default async function Home() {
               {copy.badge}
             </p>
 
-            <h1 className={styles.headline}>
-              <span className={styles.headlineLine}>
-                <span className={`${styles.headlineInner} ${styles.appear} ${styles.appearMask}`} data-appear style={delay("0.42s")}>
-                  {copy.headline.before} <em>{copy.headline.em}</em> {copy.headline.after}
+            <div className={styles.textPanel}>
+              <h1 className={styles.headline}>
+                <span className={styles.headlineLine}>
+                  <span className={`${styles.headlineInner} ${styles.appear} ${styles.appearMask}`} data-appear style={delay("0.42s")}>
+                    {copy.headline.before} <em>{copy.headline.em}</em> {copy.headline.after}
+                  </span>
                 </span>
-              </span>
-              <span className={styles.headlineLine}>
-                <span className={`${styles.headlineInner} ${styles.appear} ${styles.appearMask}`} data-appear style={delay("0.62s")}>
-                  {copy.headline.bottom}
+                <span className={styles.headlineLine}>
+                  <span className={`${styles.headlineInner} ${styles.appear} ${styles.appearMask}`} data-appear style={delay("0.62s")}>
+                    {copy.headline.bottom}
+                  </span>
                 </span>
-              </span>
-            </h1>
+              </h1>
 
-            <p className={`${styles.lede} ${styles.appear} ${styles.appearSoft}`} data-appear style={delay("0.82s")}>
-              {copy.lead}
-            </p>
+              <p className={`${styles.lede} ${styles.appear} ${styles.appearSoft}`} data-appear style={delay("0.82s")}>
+                {copy.lead}
+              </p>
+            </div>
 
             <div className={styles.heroActions}>
               <Link
