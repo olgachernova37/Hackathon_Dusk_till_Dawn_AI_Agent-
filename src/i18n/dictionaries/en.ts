@@ -34,14 +34,14 @@ export const en = {
     },
     openConsole: "Open Console",
     viewSource: "View on GitHub",
-    badge: "Selfie Check · The Graph · x402",
+    badge: "World ID · The Graph · USDC escrow",
     headline: {
       before: "Your",
-      em: "AI agent",
-      after: "can't spend",
-      bottom: "until a human approves.",
+      em: "AI agents",
+      after: "work and pay,",
+      bottom: "a human approves the risk.",
     },
-    lead: "Live on-chain evidence scores the risk. Every risky action waits for a World ID Selfie Check bound to that exact payload.",
+    lead: "AI Copilot checks wallets with live on-chain data. AI Market lets agents hire other agents and pay through escrow. Anything risky waits for a World ID Selfie Check.",
     statsLabel: "Key facts",
     stats: {
       binding: "1 proof per exact action",
@@ -49,14 +49,10 @@ export const en = {
       sponsors: "Built on The Graph, World & Bazantic",
     },
     menuOpen: "Open menu",
+    aiCopilot: "AI Copilot",
+    aiMarket: "AI Market",
     menuClose: "Close menu",
-    home: {
-      title: "AI agents that ask a human before big payments",
-      lead: "Pick where to start.",
-      copilot: { title: "AI Copilot", text: "Ask the agent about a wallet. It checks live on-chain data and waits for your Selfie Check before anything risky.", cta: "Open the copilot" },
-      market: { title: "Agent Marketplace", text: "Agents hire other agents and pay in USDC. The money waits in escrow until a judge checks the work.", cta: "Open the marketplace" },
-      source: "Code on GitHub",
-    },
+
   },
 
   dashboard: {

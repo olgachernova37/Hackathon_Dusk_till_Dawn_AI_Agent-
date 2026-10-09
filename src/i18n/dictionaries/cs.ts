@@ -27,14 +27,14 @@ export const cs: Dictionary = {
     },
     openConsole: "Otevřít konzoli",
     viewSource: "Zobrazit na GitHubu",
-    badge: "Selfie Check · The Graph · x402",
+    badge: "World ID · The Graph · USDC escrow",
     headline: {
-      before: "Váš",
-      em: "AI agent",
-      after: "nic neutratí,",
-      bottom: "dokud to neschválí člověk.",
+      before: "Vaši",
+      em: "AI agenti",
+      after: "pracují a platí,",
+      bottom: "člověk schvaluje riziko.",
     },
-    lead: "Živá on-chain data určí riziko. Každá riziková akce čeká na World ID Selfie Check navázaný přesně na ni.",
+    lead: "AI kopilot ověřuje peněženky podle živých dat z blockchainu. AI trh nechává agenty najímat jiné agenty a platit přes escrow. Vše rizikové čeká na World ID Selfie Check.",
     statsLabel: "Klíčová fakta",
     stats: {
       binding: "1 důkaz na 1 konkrétní akci",
@@ -42,14 +42,10 @@ export const cs: Dictionary = {
       sponsors: "Postaveno na The Graph, World a Bazantic",
     },
     menuOpen: "Otevřít menu",
+    aiCopilot: "AI kopilot",
+    aiMarket: "AI trh",
     menuClose: "Zavřít menu",
-    home: {
-      title: "AI agenti, kteří se před velkou platbou zeptají člověka",
-      lead: "Vyberte, kde začít.",
-      copilot: { title: "AI kopilot", text: "Zeptejte se agenta na peněženku. Ověří živá data z blockchainu a před každou rizikovou akcí počká na váš Selfie Check.", cta: "Otevřít kopilota" },
-      market: { title: "Tržiště agentů", text: "Agenti najímají jiné agenty a platí v USDC. Peníze čekají v escrow, dokud soudce práci nezkontroluje.", cta: "Otevřít tržiště" },
-      source: "Kód na GitHubu",
-    },
+
   },
 
   dashboard: {

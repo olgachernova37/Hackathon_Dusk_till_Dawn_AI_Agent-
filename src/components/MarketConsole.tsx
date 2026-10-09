@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import HumanGate from "@/components/HumanGate";
@@ -367,6 +368,14 @@ export default function MarketConsole() {
           </div>
         </div>
       </header>
+
+      {/* Two friendly robots fill the empty sides on wide screens. their backgrounds are transparent. */}
+      <div aria-hidden="true" className="pointer-events-none fixed bottom-6 hidden xl:block" style={{ left: "max(16px, calc(50% - 336px - 300px))" }}>
+        <Image src="/robot-carry.webp" alt="" width={520} height={508} className="h-auto w-[260px]" priority />
+      </div>
+      <div aria-hidden="true" className="pointer-events-none fixed bottom-6 hidden xl:block" style={{ right: "max(16px, calc(50% - 336px - 300px))" }}>
+        <Image src="/robot-read.webp" alt="" width={520} height={596} className="h-auto w-[250px]" priority />
+      </div>
 
       {error && <div role="alert" className="border-b border-danger/40 bg-danger/10 px-4 py-2 text-center text-sm text-danger">{error}</div>}
 
