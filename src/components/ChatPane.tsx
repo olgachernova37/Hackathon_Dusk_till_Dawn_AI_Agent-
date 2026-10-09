@@ -20,7 +20,7 @@ export default function ChatPane({ messages, busy, onSubmit }: ChatPaneProps) {
   }
 
   return (
-    <section className="flex min-h-[620px] flex-col bg-panel p-5 sm:p-6" aria-labelledby="chat-heading">
+    <section className="flex min-h-[480px] flex-col bg-panel p-5 sm:p-6 lg:sticky lg:top-0 lg:h-[calc(100dvh-5.5rem)] lg:min-h-[360px] lg:self-start" aria-labelledby="chat-heading">
       <div className="flex items-center justify-between border-b border-border pb-4"><h2 id="chat-heading" className="text-sm font-semibold text-foreground">{t.chat.heading}</h2><span className={`text-xs ${busy ? "text-warn" : "text-ok"}`}>{busy ? t.chat.thinking : t.chat.ready}</span></div>
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto py-5">
         {messages.length === 0 && <p className="rounded-xl border border-dashed border-border p-4 text-sm leading-6 text-muted">{t.chat.empty}</p>}
